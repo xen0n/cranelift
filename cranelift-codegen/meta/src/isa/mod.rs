@@ -4,6 +4,7 @@ use std::fmt;
 
 mod arm32;
 mod arm64;
+mod mips;
 mod riscv;
 mod x86;
 
@@ -14,6 +15,7 @@ pub enum Isa {
     X86,
     Arm32,
     Arm64,
+    Mips,
 }
 
 impl Isa {
@@ -33,13 +35,14 @@ impl Isa {
             "aarch64" => Some(Isa::Arm64),
             x if ["x86_64", "i386", "i586", "i686"].contains(&x) => Some(Isa::X86),
             x if x.starts_with("arm") || arch.starts_with("thumb") => Some(Isa::Arm32),
+            x if x.starts_with("mips") => Some(Isa::Mips),
             _ => None,
         }
     }
 
     /// Returns all supported isa targets.
-    pub fn all() -> [Isa; 4] {
-        [Isa::Riscv, Isa::X86, Isa::Arm32, Isa::Arm64]
+    pub fn all() -> [Isa; 5] {
+        [Isa::Riscv, Isa::X86, Isa::Arm32, Isa::Arm64, Isa::Mips]
     }
 }
 
@@ -51,6 +54,7 @@ impl fmt::Display for Isa {
             Isa::X86 => write!(f, "x86"),
             Isa::Arm32 => write!(f, "arm32"),
             Isa::Arm64 => write!(f, "arm64"),
+            Isa::Mips => write!(f, "mips"),
         }
     }
 }
@@ -62,6 +66,7 @@ pub fn define(isas: &Vec<Isa>, shared_defs: &mut SharedDefinitions) -> Vec<Targe
             Isa::X86 => x86::define(shared_defs),
             Isa::Arm32 => arm32::define(shared_defs),
             Isa::Arm64 => arm64::define(shared_defs),
+            Isa::Mips => mips::define(shared_defs),
         })
         .collect()
 }

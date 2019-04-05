@@ -29,7 +29,7 @@ log = { version = "0.4.6", default-features = false }
 cranelift-codegen-meta = { path = "meta", version = "0.30.0", default-features = false }
 
 [features]
-default = ["std", "x86", "arm32", "arm64", "riscv"]
+default = ["std", "x86", "arm32", "arm64", "riscv", "mips"]
 
 # The "std" feature enables use of libstd. The "core" feature enables use
 # of some minimal std-like replacement libraries. At least one of these two
@@ -57,6 +57,7 @@ x86 = []
 arm32 = []
 arm64 = []
 riscv = []
+mips = []
 
 [badges]
 maintenance = { status = "experimental" }

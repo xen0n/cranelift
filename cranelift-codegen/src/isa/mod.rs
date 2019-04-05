@@ -80,6 +80,9 @@ mod arm32;
 #[cfg(feature = "arm64")]
 mod arm64;
 
+#[cfg(feature = "mips")]
+mod mips;
+
 mod call_conv;
 mod constraints;
 mod enc_tables;
@@ -120,6 +123,10 @@ pub fn lookup(triple: Triple) -> Result<Builder, LookupError> {
         | Architecture::Armv7
         | Architecture::Armv7s => isa_builder!(arm32, "arm32")(triple),
         Architecture::Aarch64 => isa_builder!(arm64, "arm64")(triple),
+        Architecture::Mips
+        | Architecture::Mips64
+        | Architecture::Mips64el
+        | Architecture::Mipsel => isa_builder!(mips, "mips")(triple),
         _ => Err(LookupError::Unsupported),
     }
 }
