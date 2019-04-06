@@ -37,6 +37,11 @@ R = EncRecipe(
         'R', Binary, base_size=4, ins=(GPR, GPR), outs=GPR,
         emit='put_r(bits, in_reg0, in_reg1, out_reg0, sink);')
 
+# R-type for variable shifts where the two input registers should be swapped in position.
+Rshift = EncRecipe(
+        'Rshift', Binary, base_size=4, ins=(GPR, GPR), outs=GPR,
+        emit='put_r(bits, in_reg1, in_reg0, out_reg0, sink);')
+
 # R-type with an immediate shamt.
 Rshamt = EncRecipe(
         'Rshamt', BinaryImm, base_size=4, ins=GPR, outs=GPR,

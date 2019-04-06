@@ -6,7 +6,7 @@ from base import instructions as base
 from base.immediates import intcc
 from .defs import MIPS32, MIPS64
 from .recipes import OP, OPF, OPRI
-from .recipes import R, Rret, I, Ic, Icr, Icrz, J
+from .recipes import R, Rshift, Rshamt, Rret, I, Ic, Icr, Icrz, J
 from base.legalize import narrow, expand
 
 
@@ -47,6 +47,26 @@ MIPS32.enc(base.bxor.i32,     R, OPF(0b000000, 0b100110))  # XOR
 MIPS64.enc(base.bxor.i64,     R, OPF(0b000000, 0b100110))
 MIPS32.enc(base.bxor_imm.i32, I, OP (0b001110))            # XORI
 MIPS64.enc(base.bxor_imm.i64, I, OP (0b001110))
+
+# Dynamic shifts have the same masking semantics as the clif base instructions.
+MIPS32.enc(base.ishl.i32.i32, Rshift, OPF(0b000000, 0b000100))  # SLLV
+MIPS64.enc(base.ishl.i32.i32, Rshift, OPF(0b000000, 0b000100))
+MIPS64.enc(base.ishl.i64.i64, Rshift, OPF(0b000000, 0b010100))  # DSLLV
+MIPS32.enc(base.ishl_imm.i32, Rshamt, OPF(0b000000, 0b000000))  # SLL
+MIPS64.enc(base.ishl_imm.i32, Rshamt, OPF(0b000000, 0b000000))
+MIPS64.enc(base.ishl_imm.i64, Rshamt, OPF(0b000000, 0b111000))  # DSLL
+MIPS32.enc(base.ushr.i32.i32, Rshift, OPF(0b000000, 0b000110))  # SRLV
+MIPS64.enc(base.ushr.i32.i32, Rshift, OPF(0b000000, 0b000110))
+MIPS64.enc(base.ushr.i64.i64, Rshift, OPF(0b000000, 0b010110))  # DSRLV
+MIPS32.enc(base.ushr_imm.i32, Rshamt, OPF(0b000000, 0b000010))  # SRL
+MIPS64.enc(base.ushr_imm.i32, Rshamt, OPF(0b000000, 0b000010))
+MIPS64.enc(base.ushr_imm.i64, Rshamt, OPF(0b000000, 0b111010))  # DSRL
+MIPS32.enc(base.sshr.i32.i32, Rshift, OPF(0b000000, 0b000111))  # SRAV
+MIPS64.enc(base.sshr.i32.i32, Rshift, OPF(0b000000, 0b000111))
+MIPS64.enc(base.sshr.i64.i64, Rshift, OPF(0b000000, 0b010111))  # DSRAV
+MIPS32.enc(base.sshr_imm.i32, Rshamt, OPF(0b000000, 0b000011))  # SRA
+MIPS64.enc(base.sshr_imm.i32, Rshamt, OPF(0b000000, 0b000011))
+MIPS64.enc(base.sshr_imm.i64, Rshamt, OPF(0b000000, 0b111011))  # DSRA
 
 # Control flow.
 
