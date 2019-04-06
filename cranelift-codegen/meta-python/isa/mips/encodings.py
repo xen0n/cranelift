@@ -28,6 +28,7 @@ MIPS64.legalize_type(
 MIPS32.enc(base.iadd.i32,     R, OPF(0b000000, 0b100001))  # ADDU
 MIPS64.enc(base.iadd.i64,     R, OPF(0b000000, 0b101101))  # DADDU
 MIPS32.enc(base.iadd_imm.i32, I, OP (0b001001))            # ADDIU
+MIPS64.enc(base.iadd_imm.i32, I, OP (0b001001))
 MIPS64.enc(base.iadd_imm.i64, I, OP (0b011001))            # DADDIU
 MIPS32.enc(base.isub.i32,     R, OPF(0b000000, 0b100011))  # SUBU
 MIPS64.enc(base.isub.i64,     R, OPF(0b000000, 0b101111))  # DSUBU

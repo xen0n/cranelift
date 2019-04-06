@@ -123,6 +123,75 @@ impl TargetIsa for Isa {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use crate::ir::{immediates, types};
+    use crate::ir::{Function, InstructionData, Opcode};
+    use crate::isa;
+    use crate::settings::{self, Configurable};
+    use core::str::FromStr;
+    use std::string::{String, ToString};
+    use target_lexicon::triple;
+
+    fn encstr(isa: &isa::TargetIsa, enc: Result<isa::Encoding, isa::Legalize>) -> String {
+        match enc {
+            Ok(e) => isa.encoding_info().display(e).to_string(),
+            Err(_) => "no encoding".to_string(),
+        }
+    }
+
+    #[test]
+    fn test_64bitenc() {
+        let shared_builder = settings::builder();
+        let shared_flags = settings::Flags::new(shared_builder);
+        let isa = isa::lookup(triple!("mips64el"))
+            .unwrap()
+            .finish(shared_flags);
+
+        let mut func = Function::new();
+        let ebb = func.dfg.make_ebb();
+        let arg64 = func.dfg.append_ebb_param(ebb, types::I64);
+        let arg32 = func.dfg.append_ebb_param(ebb, types::I32);
+
+        // Try to encode iadd_imm.i64 v1, -10.
+        let inst64 = InstructionData::BinaryImm {
+            opcode: Opcode::IaddImm,
+            arg: arg64,
+            imm: immediates::Imm64::new(-10),
+        };
+
+        // DADDIU is I/0b011001
+        assert_eq!(
+            encstr(&*isa, isa.encode(&func, &inst64, types::I64)),
+            "I#19"
+        );
+
+        // Try to encode iadd_imm.i64 v1, -32769.
+        let inst64_large = InstructionData::BinaryImm {
+            opcode: Opcode::IaddImm,
+            arg: arg64,
+            imm: immediates::Imm64::new(-32769),
+        };
+
+        // Immediate is out of range for DADDIU.
+        assert!(isa.encode(&func, &inst64_large, types::I64).is_err());
+
+        // Create an iadd_imm.i32 which is encodable in MIPS64.
+        let inst32 = InstructionData::BinaryImm {
+            opcode: Opcode::IaddImm,
+            arg: arg32,
+            imm: immediates::Imm64::new(10),
+        };
+
+        // ADDIU is I/0b001001
+        assert_eq!(
+            encstr(&*isa, isa.encode(&func, &inst32, types::I32)),
+            "I#09"
+        );
+
+    }
+}
+
 impl fmt::Display for Isa {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}\n{}", self.shared_flags, self.isa_flags)
