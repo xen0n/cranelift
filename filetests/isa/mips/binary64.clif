@@ -1,0 +1,87 @@
+; Binary emission of 64-bit code.
+test binemit
+target mips64el
+
+function %MIPS64(i64 link [%ra]) -> i64 link [%ra] {
+    sig0 = ()
+    fn0 = %foo()
+
+ebb0(v9999: i64):
+    [-,%a0]             v1 = iconst.i64 1
+    [-,%a1]             v2 = iconst.i64 2
+
+    ; Integer Register-Register Operations.
+    ; daddu
+    [-,%v0]             v10 = iadd v1, v2       ; bin: 0085102d
+    [-,%v1]             v11 = iadd v2, v1       ; bin: 00a4182d
+    ; dsubu
+    [-,%v0]             v12 = isub v1, v2       ; bin: 0085102f
+    [-,%v1]             v13 = isub v2, v1       ; bin: 00a4182f
+    ; and
+    [-,%v0]             v20 = band v1, v2       ; bin: 00851024
+    [-,%v1]             v21 = band v2, v1       ; bin: 00a41824
+    ; or
+    [-,%v0]             v22 = bor v1, v2        ; bin: 00851025
+    [-,%v1]             v23 = bor v2, v1        ; bin: 00a41825
+    ; xor
+    [-,%v0]             v24 = bxor v1, v2       ; bin: 00851026
+    [-,%v1]             v25 = bxor v2, v1       ; bin: 00a41826
+    ; dsllv
+    [-,%v0]             v30 = ishl v1, v2       ; bin: 00a41014
+    [-,%v1]             v31 = ishl v2, v1       ; bin: 00851814
+    ; dsrlv
+    [-,%v0]             v32 = ushr v1, v2       ; bin: 00a41016
+    [-,%v1]             v33 = ushr v2, v1       ; bin: 00851816
+    ; dsrav
+    [-,%v0]             v34 = sshr v1, v2       ; bin: 00a41017
+    [-,%v1]             v35 = sshr v2, v1       ; bin: 00851817
+
+    ; TODO
+    ; slt
+    ;[-,%v0]             v42 = icmp slt v1, v2   ; bin: 015523b3
+    ;[-,%v1]             v43 = icmp slt v2, v1   ; bin: 00aaa833
+    ; sltu
+    ;[-,%v0]             v44 = icmp ult v1, v2   ; bin: 015533b3
+    ;[-,%v1]             v45 = icmp ult v2, v1   ; bin: 00aab833
+
+    ; Integer Register-Immediate Instructions
+
+    ; addi
+    [-,%v0]     v100 = iadd_imm v1, 1000       ; bin: 648203e8
+    [-,%v1]     v101 = iadd_imm v2, -905       ; bin: 64a3fc77
+    ; andi
+    [-,%v0]     v110 = band_imm v1, 1000       ; bin: 308203e8
+    [-,%v1]     v111 = band_imm v2, -905       ; bin: 30a3fc77
+    ; ori
+    [-,%v0]     v112 = bor_imm v1, 1000        ; bin: 348203e8
+    [-,%v1]     v113 = bor_imm v2, -905        ; bin: 34a3fc77
+    ; xori
+    [-,%v0]     v114 = bxor_imm v1, 1000       ; bin: 388203e8
+    [-,%v1]     v115 = bxor_imm v2, -905       ; bin: 38a3fc77
+
+    ; dsll
+    [-,%v0]     v120 = ishl_imm v1, 31         ; bin: 000417f8
+    ; dsrl
+    [-,%v1]     v121 = ushr_imm v2, 31         ; bin: 00051ffa
+    ; dsra
+    [-,%v0]     v122 = sshr_imm v1, 31         ; bin: 000417fb
+
+    ; slti
+    ;[-,%v0]     v130 = icmp_imm slt v1, 1000   ; bin: 3e852393
+    ;[-,%v1]     v131 = icmp_imm slt v2, -905   ; bin: c77aa813
+    ; sltiu
+    ;[-,%v0]     v132 = icmp_imm ult v1, 1000   ; bin: 3e853393
+    ;[-,%v1]     v133 = icmp_imm ult v2, -905   ; bin: c77ab813
+
+    ; lui
+    ;[-,%v0]     v140 = iconst.i32 0x12345000            ; bin: 123453b7
+    ;[-,%v1]     v141 = iconst.i32 0xffffffff_fedcb000   ; bin: fedcb837
+    ; addi
+    ;[-,%v0]     v142 = iconst.i32 1000                  ; bin: 3e800393
+    ;[-,%v1]     v143 = iconst.i32 -905                  ; bin: c7700813
+
+    ; Control Transfer Instructions
+
+    ; jalr %x0, %x1, 0
+    return v9999                        ; bin: 03e00008
+}
