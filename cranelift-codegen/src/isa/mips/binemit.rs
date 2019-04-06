@@ -14,7 +14,7 @@ include!(concat!(env!("OUT_DIR"), "/binemit-mips.rs"));
 /// Encoding bits: `(funct << 6) | opcode`.
 fn decompose_bits(bits: u16) -> (u32, u32) {
     let opcode = bits & 0x3f;
-    let funct = (bits >> 6) & 0x1f;
+    let funct = (bits >> 6) & 0x3f;
 
     (opcode as u32, funct as u32)
 }
@@ -45,19 +45,17 @@ fn put_r<CS: CodeSink + ?Sized>(
 /// R-type instructions with dynamic shamt.
 fn put_rshamt<CS: CodeSink + ?Sized>(
     bits: u16,
-    shamt: i64,
-    rs: RegUnit,
     rt: RegUnit,
     rd: RegUnit,
+    shamt: i64,
     sink: &mut CS,
 ) {
     let (opcode, funct) = decompose_bits(bits);
     let shamt = (shamt as u32) & 0x1f;
-    let rs = u32::from(rs) & 0x1f;
     let rt = u32::from(rt) & 0x1f;
     let rd = u32::from(rd) & 0x1f;
 
-    internal_put_r(opcode, shamt, funct, rs, rt, rd, sink);
+    internal_put_r(opcode, shamt, funct, 0, rt, rd, sink);
 }
 
 /// R-type instructions.
