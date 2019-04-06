@@ -6,7 +6,7 @@ from base import instructions as base
 from base.immediates import intcc
 from .defs import MIPS32, MIPS64
 from .recipes import OP, OPF, OPRI
-from .recipes import R, I, Ic, Icr, Icrz, J
+from .recipes import R, Rret, I, Ic, Icr, Icrz, J
 from base.legalize import narrow, expand
 
 
@@ -60,3 +60,11 @@ MIPS64.enc(base.jump, J,    OP  (0b000010))
 # MIPS64.enc(base.call, Icrz, OPRI(0b10001))
 # MIPS32.enc(base.call, J,    OP  (0b000011))  # JAL
 # MIPS64.enc(base.call, J,    OP  (0b000011))
+
+# Returns are just `jr $ra`'s in MIPS.
+# The return address is provided by a special-purpose `link` return value that
+# is added by legalize_signature().
+MIPS32.enc(base.x_return,          Rret,  OPF(0b000000, 0b001000))  # JR
+MIPS64.enc(base.x_return,          Rret,  OPF(0b000000, 0b001000))
+#MIPS32.enc(base.call_indirect.i32, Rcall, OPF(0b000000, 0b001000))
+#MIPS64.enc(base.call_indirect.i64, Rcall, OPF(0b000000, 0b001000))

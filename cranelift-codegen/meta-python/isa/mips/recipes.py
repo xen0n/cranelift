@@ -42,6 +42,21 @@ Rshamt = EncRecipe(
         'Rshamt', BinaryImm, base_size=4, ins=GPR, outs=GPR,
         emit='put_rshamt(bits, in_reg0, out_reg0, imm.into(), sink);')
 
+# R-type encoding for `jr` as a return instruction.
+Rret = EncRecipe(
+        'Rret', MultiAry, base_size=4, ins=(), outs=(),
+        emit='''
+        // Return instructions are always a jalr to %x1.
+        // The return address is provided as a special-purpose link argument.
+        put_r(
+            bits,
+            31, // rs = %ra
+            0,  // rt = unused
+            0,  // rd = unused
+            sink,
+        );
+        ''')
+
 I = EncRecipe(
         'I', BinaryImm, base_size=4, ins=GPR, outs=GPR,
         instp=IsSignedInt(BinaryImm.imm, 16),
