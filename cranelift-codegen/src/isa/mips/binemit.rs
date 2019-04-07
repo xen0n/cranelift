@@ -26,6 +26,11 @@ fn decompose_bits_regimm(bits: u16) -> (u32, u32) {
     decompose_bits(bits)
 }
 
+/// NOP helper.
+fn put_nop<CS: CodeSink + ?Sized>(sink: &mut CS) {
+    sink.put4(0);
+}
+
 /// R-type instructions with constant zero shamt.
 fn put_r<CS: CodeSink + ?Sized>(
     bits: u16,
