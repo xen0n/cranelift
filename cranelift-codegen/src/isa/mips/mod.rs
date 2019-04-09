@@ -63,6 +63,10 @@ impl TargetIsa for Isa {
         &self.triple
     }
 
+    fn has_delay_slot(&self) -> bool {
+        true
+    }
+
     fn flags(&self) -> &shared_settings::Flags {
         &self.shared_flags
     }

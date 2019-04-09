@@ -259,6 +259,11 @@ pub trait TargetIsa: fmt::Display + Sync {
         false
     }
 
+    /// Does this ISA implement architectural delay slots?
+    fn has_delay_slot(&self) -> bool {
+        false
+    }
+
     /// Get a data structure describing the registers in this ISA.
     fn register_info(&self) -> RegInfo;
 
@@ -379,4 +384,9 @@ pub trait TargetIsa: fmt::Display + Sync {
 
     /// Emit a whole function into memory.
     fn emit_function_to_memory(&self, func: &ir::Function, sink: &mut binemit::MemoryCodeSink);
+
+    /// Fill delay slots for a function.
+    fn fill_delay_slots(&self, func: &mut ir::Function) -> CodegenResult<binemit::CodeOffset> {
+        Ok(0)
+    }
 }
