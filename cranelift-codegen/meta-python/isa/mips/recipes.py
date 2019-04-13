@@ -60,6 +60,7 @@ Rret = EncRecipe(
             0,  // rd = unused
             sink,
         );
+        put_nop(sink);
         ''')
 
 I = EncRecipe(
@@ -76,6 +77,7 @@ Ic = EncRecipe(
         let dest = i64::from(func.offsets[destination]);
         let disp = dest - i64::from(sink.offset());
         put_i(bits, in_reg0, in_reg1, disp, sink);
+        put_nop(sink);
         ''')
 
 # Ic implemented with REGIMM instructions.
@@ -87,6 +89,7 @@ Icr = EncRecipe(
         let dest = i64::from(func.offsets[destination]);
         let disp = dest - i64::from(sink.offset());
         put_i_regimm(bits, in_reg0, disp, sink);
+        put_nop(sink);
         ''')
 
 # Icr for unconditional branches (rs=zero).
@@ -98,6 +101,7 @@ Icrz = EncRecipe(
         let dest = i64::from(func.offsets[destination]);
         let disp = dest - i64::from(sink.offset());
         put_i_regimm(bits, 0, disp, sink);
+        put_nop(sink);
         ''')
 
 J = EncRecipe(
@@ -106,6 +110,7 @@ J = EncRecipe(
         let dest = i64::from(func.offsets[destination]);
         let disp = dest - i64::from(sink.offset());
         put_j(bits, disp, sink);
+        put_nop(sink);
         ''')
 
 # Spill of a GPR.
