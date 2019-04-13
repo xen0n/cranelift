@@ -4,9 +4,10 @@ MIPS Encodings.
 from __future__ import absolute_import
 from base import instructions as base
 from base.immediates import intcc
+from cdsl.ast import Var
 from .defs import MIPS32, MIPS64
 from .recipes import OP, OPF, OPRI
-from .recipes import R, Rshift, Rshamt, Rret, I, Ic, Icr, Icrz, J
+from .recipes import R, Ricmp, Rshift, Rshamt, Rret, I, Iicmp, Ic, Icr, Icrz, J
 from base.legalize import narrow, expand
 
 
@@ -24,6 +25,12 @@ MIPS64.legalize_type(
         i64=expand,
         f32=expand,
         f64=expand)
+
+# Dummies for instruction predicates.
+x = Var('x')
+y = Var('y')
+dest = Var('dest')
+args = Var('args')
 
 MIPS32.enc(base.iadd.i32,     R, OPF(0b000000, 0b100001))  # ADDU
 MIPS64.enc(base.iadd.i64,     R, OPF(0b000000, 0b101101))  # DADDU
@@ -67,6 +74,18 @@ MIPS64.enc(base.sshr.i64.i64, Rshift, OPF(0b000000, 0b010111))  # DSRAV
 MIPS32.enc(base.sshr_imm.i32, Rshamt, OPF(0b000000, 0b000011))  # SRA
 MIPS64.enc(base.sshr_imm.i32, Rshamt, OPF(0b000000, 0b000011))
 MIPS64.enc(base.sshr_imm.i64, Rshamt, OPF(0b000000, 0b111011))  # DSRA
+
+# Signed and unsigned integer 'less than'. There are no 'w' variants for
+# comparing 32-bit numbers in MIPS64.
+MIPS32.enc(base.icmp.i32(intcc.slt, x, y),     Ricmp, OPF(0b000000, 0b101010))  # SLT
+MIPS64.enc(base.icmp.i64(intcc.slt, x, y),     Ricmp, OPF(0b000000, 0b101010))
+MIPS32.enc(base.icmp.i32(intcc.ult, x, y),     Ricmp, OPF(0b000000, 0b000000))  # SLTU
+MIPS64.enc(base.icmp.i64(intcc.ult, x, y),     Ricmp, OPF(0b000000, 0b000000))
+
+MIPS32.enc(base.icmp_imm.i32(intcc.slt, x, y), Iicmp, OP (0b001010))  # SLTI
+MIPS64.enc(base.icmp_imm.i64(intcc.slt, x, y), Iicmp, OP (0b001010))
+MIPS32.enc(base.icmp_imm.i32(intcc.ult, x, y), Iicmp, OP (0b001011))  # SLTIU
+MIPS64.enc(base.icmp_imm.i64(intcc.ult, x, y), Iicmp, OP (0b001011))
 
 # Control flow.
 

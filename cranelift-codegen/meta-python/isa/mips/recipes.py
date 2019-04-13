@@ -47,6 +47,11 @@ Rshamt = EncRecipe(
         'Rshamt', BinaryImm, base_size=4, ins=GPR, outs=GPR,
         emit='put_rshamt(bits, in_reg0, out_reg0, imm.into(), sink);')
 
+# R-type encoding of an integer comparison.
+Ricmp = EncRecipe(
+        'Ricmp', IntCompare, base_size=4, ins=(GPR, GPR), outs=GPR,
+        emit='put_r(bits, in_reg0, in_reg1, out_reg0, sink);')
+
 # R-type encoding for `jr` as a return instruction.
 Rret = EncRecipe(
         'Rret', MultiAry, base_size=4, ins=(), outs=(),
@@ -66,6 +71,12 @@ Rret = EncRecipe(
 I = EncRecipe(
         'I', BinaryImm, base_size=4, ins=GPR, outs=GPR,
         instp=IsSignedInt(BinaryImm.imm, 16),
+        emit='put_i(bits, in_reg0, out_reg0, imm.into(), sink);')
+
+# I-type encoding of an integer comparison.
+Iicmp = EncRecipe(
+        'Iicmp', IntCompareImm, base_size=4, ins=GPR, outs=GPR,
+        instp=IsSignedInt(IntCompareImm.imm, 16),
         emit='put_i(bits, in_reg0, out_reg0, imm.into(), sink);')
 
 # I-type branch instructions with 18-bit offset.
