@@ -91,6 +91,18 @@ Ic = EncRecipe(
         put_nop(sink);
         ''')
 
+# Ic instructions with rt=zero.
+Icz = EncRecipe(
+        'Icz', Branch, base_size=4,
+        ins=(GPR), outs=(),
+        branch_range=(0, 18),
+        emit='''
+        let dest = i64::from(func.offsets[destination]);
+        let disp = dest - i64::from(sink.offset());
+        put_i(bits, in_reg0, 0, disp, sink);
+        put_nop(sink);
+        ''')
+
 # Ic implemented with REGIMM instructions.
 Icr = EncRecipe(
         'Icr', Branch, base_size=4,

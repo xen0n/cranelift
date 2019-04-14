@@ -7,7 +7,7 @@ from base.immediates import intcc
 from cdsl.ast import Var
 from .defs import MIPS32, MIPS64
 from .recipes import OP, OPF, OPRI
-from .recipes import R, Ricmp, Rshift, Rshamt, Rret, I, Iicmp, Ic, Icr, Icrz, J
+from .recipes import R, Ricmp, Rshift, Rshamt, Rret, I, Iicmp, Ic, Icz, Icr, Icrz, J
 from base.legalize import narrow, expand
 
 
@@ -99,6 +99,21 @@ MIPS64.enc(base.jump, J,    OP  (0b000010))
 # MIPS64.enc(base.call, Icrz, OPRI(0b10001))
 # MIPS32.enc(base.call, J,    OP  (0b000011))  # JAL
 # MIPS64.enc(base.call, J,    OP  (0b000011))
+
+# Conditional branches.
+MIPS32.enc(base.br_icmp.i32(intcc.eq, x, y, dest, args), Ic, OP(0b000100))  # BEQ
+MIPS64.enc(base.br_icmp.i64(intcc.eq, x, y, dest, args), Ic, OP(0b000100))
+MIPS32.enc(base.br_icmp.i32(intcc.ne, x, y, dest, args), Ic, OP(0b000101))  # BNE
+MIPS64.enc(base.br_icmp.i64(intcc.ne, x, y, dest, args), Ic, OP(0b000101))
+
+for inst,           op in [
+        (base.brz,  0b000100),  # BEQ rs, zero
+        (base.brnz, 0b000101),  # BNE rs, zero
+        ]:
+    MIPS32.enc(inst.i32, Icz, OP(op))
+    MIPS64.enc(inst.i64, Icz, OP(op))
+    MIPS32.enc(inst.b1, Icz, OP(op))
+    MIPS64.enc(inst.b1, Icz, OP(op))
 
 # Returns are just `jr $ra`'s in MIPS.
 # The return address is provided by a special-purpose `link` return value that
