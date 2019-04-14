@@ -73,6 +73,12 @@ I = EncRecipe(
         instp=IsSignedInt(BinaryImm.imm, 16),
         emit='put_i(bits, in_reg0, out_reg0, imm.into(), sink);')
 
+# I-type instruction with a hardcoded rs=zero.
+Iz = EncRecipe(
+        'Iz', UnaryImm, base_size=4, ins=(), outs=GPR,
+        instp=IsSignedInt(UnaryImm.imm, 16),
+        emit='put_i(bits, 0, out_reg0, imm.into(), sink);')
+
 # I-type encoding of an integer comparison.
 Iicmp = EncRecipe(
         'Iicmp', IntCompareImm, base_size=4, ins=GPR, outs=GPR,

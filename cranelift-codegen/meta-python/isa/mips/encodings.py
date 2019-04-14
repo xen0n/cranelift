@@ -7,7 +7,7 @@ from base.immediates import intcc
 from cdsl.ast import Var
 from .defs import MIPS32, MIPS64
 from .recipes import OP, OPF, OPRI
-from .recipes import R, Ricmp, Rshift, Rshamt, Rret, I, Iicmp, Ic, Icz, Icr, Icrz, J
+from .recipes import R, Ricmp, Rshift, Rshamt, Rret, I, Iz, Iicmp, Ic, Icz, Icr, Icrz, J
 from base.legalize import narrow, expand
 
 
@@ -54,6 +54,11 @@ MIPS32.enc(base.bxor.i32,     R, OPF(0b000000, 0b100110))  # XOR
 MIPS64.enc(base.bxor.i64,     R, OPF(0b000000, 0b100110))
 MIPS32.enc(base.bxor_imm.i32, I, OP (0b001110))            # XORI
 MIPS64.enc(base.bxor_imm.i64, I, OP (0b001110))
+
+# Use iadd_imm with %zero to materialize constants.
+MIPS32.enc(base.iconst.i32, Iz, OP(0b001001))  # ADDIU rt, zero
+MIPS64.enc(base.iconst.i32, Iz, OP(0b001001))
+MIPS64.enc(base.iconst.i64, Iz, OP(0b011001))  # DADDIU rt, zero
 
 # Dynamic shifts have the same masking semantics as the clif base instructions.
 MIPS32.enc(base.ishl.i32.i32, Rshift, OPF(0b000000, 0b000100))  # SLLV
