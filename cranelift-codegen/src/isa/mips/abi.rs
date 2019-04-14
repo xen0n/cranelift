@@ -127,7 +127,7 @@ pub fn allocatable_registers(_func: &ir::Function, _isa_flags: &settings::Flags)
     regs.take(GPR, GPR.unit(27)); // k1.
     regs.take(GPR, GPR.unit(28)); // Global pointer.
     regs.take(GPR, GPR.unit(29)); // Stack pointer.
-    regs.take(GPR, GPR.unit(31)); // Return address.
+                                  // %ra is the link register which is available for allocation.
                                   // TODO: $30 is the frame pointer. Reserve it?
 
     // TODO: no-odd-spreg for FPR
