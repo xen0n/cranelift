@@ -7,7 +7,7 @@ from base.immediates import intcc
 from cdsl.ast import Var
 from .defs import MIPS32, MIPS64
 from .recipes import OP, OPF, OPRI
-from .recipes import R, Ricmp, Rshift, Rshamt, Rret, I, Iz, Iicmp, Ic, Icz, Icr, Icrz, J
+from .recipes import R, Ricmp, Rshift, Rshamt, Rret, Rcopy, Rrmov, I, Iz, Iicmp, Ic, Icz, Icr, Icrz, J
 from base.legalize import narrow, expand
 
 
@@ -127,3 +127,15 @@ MIPS32.enc(base.x_return,          Rret,  OPF(0b000000, 0b001000))  # JR
 MIPS64.enc(base.x_return,          Rret,  OPF(0b000000, 0b001000))
 #MIPS32.enc(base.call_indirect.i32, Rcall, OPF(0b000000, 0b001000))
 #MIPS64.enc(base.call_indirect.i64, Rcall, OPF(0b000000, 0b001000))
+
+# Register copies.
+MIPS32.enc(base.copy.i32,    Rcopy, OPF(0b000000, 0b100101))  # OR (MOVE)
+MIPS64.enc(base.copy.i64,    Rcopy, OPF(0b000000, 0b100101))
+
+MIPS32.enc(base.regmove.i32, Rrmov, OPF(0b000000, 0b100101))
+MIPS64.enc(base.regmove.i64, Rrmov, OPF(0b000000, 0b100101))
+
+MIPS32.enc(base.copy.b1,     Rcopy, OPF(0b000000, 0b100101))
+MIPS64.enc(base.copy.b1,     Rcopy, OPF(0b000000, 0b100101))
+MIPS32.enc(base.regmove.b1,  Rrmov, OPF(0b000000, 0b100101))
+MIPS64.enc(base.regmove.b1,  Rrmov, OPF(0b000000, 0b100101))

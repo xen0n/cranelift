@@ -68,6 +68,16 @@ Rret = EncRecipe(
         put_nop(sink);
         ''')
 
+# Copy of a GPR is implemented as or rd, rs, zero (move).
+Rcopy = EncRecipe(
+        'Rcopy', Unary, base_size=4, ins=GPR, outs=GPR,
+        emit='put_r(bits, in_reg0, 0, out_reg0, sink);')
+
+# Same for a GPR regmove.
+Rrmov = EncRecipe(
+        'Rrmov', RegMove, base_size=4, ins=GPR, outs=(),
+        emit='put_r(bits, src, 0, dst, sink);')
+
 I = EncRecipe(
         'I', BinaryImm, base_size=4, ins=GPR, outs=GPR,
         instp=IsSignedInt(BinaryImm.imm, 16),
