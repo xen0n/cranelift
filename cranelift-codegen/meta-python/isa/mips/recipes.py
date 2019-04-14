@@ -114,7 +114,6 @@ Icz = EncRecipe(
         let dest = i64::from(func.offsets[destination]);
         let disp = dest - i64::from(sink.offset());
         put_i(bits, in_reg0, 0, disp, sink);
-        put_nop(sink);
         ''')
 
 # Ic implemented with REGIMM instructions.
