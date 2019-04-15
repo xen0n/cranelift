@@ -10,7 +10,7 @@ use super::super::settings as shared_settings;
 #[cfg(feature = "testing_hooks")]
 use crate::binemit::CodeSink;
 use crate::binemit::{emit_function, MemoryCodeSink};
-use crate::cursor::{Cursor, FuncCursor};
+use crate::cursor::{Cursor, EncCursor, FuncCursor};
 use crate::ir;
 use crate::isa::enc_tables::{self as shared_enc_tables, lookup_enclist, Encodings};
 use crate::isa::Builder as IsaBuilder;
@@ -139,6 +139,12 @@ impl TargetIsa for Isa {
             encinfo.display(cur.func.encodings[inst]),
             cur.func.dfg.display_inst(inst, self as &dyn TargetIsa),
         );
+
+        use crate::ir::InstBuilder;
+
+        let mut cur = EncCursor::new(cur.func, self).after_inst(inst);
+        // TODO: do some real re-ordering here
+        cur.ins().nop();
     }
 }
 
