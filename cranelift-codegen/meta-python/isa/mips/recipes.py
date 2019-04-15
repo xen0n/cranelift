@@ -107,7 +107,7 @@ Ic = EncRecipe(
         emit='''
         let dest = i64::from(func.offsets[destination]);
         let disp = dest - i64::from(sink.offset());
-        put_i(bits, in_reg0, in_reg1, disp, sink);
+        put_i_br(bits, in_reg0, in_reg1, disp, sink);
         ''')
 
 # Ic instructions with rt=zero.
@@ -118,7 +118,7 @@ Icz = EncRecipe(
         emit='''
         let dest = i64::from(func.offsets[destination]);
         let disp = dest - i64::from(sink.offset());
-        put_i(bits, in_reg0, 0, disp, sink);
+        put_i_br(bits, in_reg0, 0, disp, sink);
         ''')
 
 # Ic implemented with REGIMM instructions.
@@ -129,7 +129,7 @@ Icr = EncRecipe(
         emit='''
         let dest = i64::from(func.offsets[destination]);
         let disp = dest - i64::from(sink.offset());
-        put_i_regimm(bits, in_reg0, disp, sink);
+        put_i_regimm_br(bits, in_reg0, disp, sink);
         ''')
 
 # Icr for unconditional branches (rs=zero).
@@ -140,7 +140,7 @@ Icrz = EncRecipe(
         emit='''
         let dest = i64::from(func.offsets[destination]);
         let disp = dest - i64::from(sink.offset());
-        put_i_regimm(bits, 0, disp, sink);
+        put_i_regimm_br(bits, 0, disp, sink);
         ''')
 
 J = EncRecipe(

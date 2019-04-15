@@ -96,12 +96,24 @@ fn put_i<CS: CodeSink + ?Sized>(bits: u16, rs: RegUnit, rt: RegUnit, imm: i64, s
     internal_put_i(opcode, rs, rt, imm, sink);
 }
 
+/// I-type instructions with a branch destination offset as immediate operand.
+fn put_i_br<CS: CodeSink + ?Sized>(bits: u16, rs: RegUnit, rt: RegUnit, imm: i64, sink: &mut CS) {
+    debug_assert!(is_signed_int(imm, 18, 2), "IMM out of range {:#x}", imm);
+    put_i(bits, rs, rt, imm >> 2, sink);
+}
+
 /// I-type REGIMM instructions.
 fn put_i_regimm<CS: CodeSink + ?Sized>(bits: u16, rs: RegUnit, imm: i64, sink: &mut CS) {
     let (opcode, rt) = decompose_bits_regimm(bits);
     let rs = u32::from(rs) & 0x1f;
 
     internal_put_i(opcode, rs, rt, imm, sink);
+}
+
+/// I-type REGIMM instructions with a branch destination offset as immediate operand.
+fn put_i_regimm_br<CS: CodeSink + ?Sized>(bits: u16, rs: RegUnit, imm: i64, sink: &mut CS) {
+    debug_assert!(is_signed_int(imm, 18, 2), "IMM out of range {:#x}", imm);
+    put_i_regimm(bits, rs, imm >> 2, sink);
 }
 
 /// I-type instructions.
@@ -136,7 +148,7 @@ fn put_j<CS: CodeSink + ?Sized>(bits: u16, imm: i64, sink: &mut CS) {
     let (opcode, _funct) = decompose_bits(bits);
 
     debug_assert!(is_signed_int(imm, 28, 2), "IMM out of range {:#x}", imm);
-    let imm = imm as u32;
+    let imm = (imm as u32) >> 2;
 
     let mut i = imm;
     i |= opcode << 26;
