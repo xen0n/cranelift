@@ -6,7 +6,7 @@ from cdsl.isa import EncRecipe
 from cdsl.predicates import IsSignedInt
 from cdsl.registers import Stack
 from base.formats import Binary, BinaryImm, MultiAry, IntCompare, IntCompareImm
-from base.formats import Unary, UnaryImm, BranchIcmp, Branch, Jump
+from base.formats import NullAry, Unary, UnaryImm, BranchIcmp, Branch, Jump
 from base.formats import Call, CallIndirect, RegMove
 from .registers import GPR
 
@@ -31,6 +31,11 @@ def OPF(opcode, funct):
     assert funct <= 0b111111
     return (funct << 6) | opcode
 
+
+# Special recipe for NOPs.
+Nop = EncRecipe(
+        'Nop', NullAry, base_size=4, ins=(), outs=(),
+        emit='put_nop(sink);')
 
 # R-type with constant shamt.
 R = EncRecipe(

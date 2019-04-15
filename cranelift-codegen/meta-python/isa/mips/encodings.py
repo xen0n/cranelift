@@ -7,7 +7,7 @@ from base.immediates import intcc
 from cdsl.ast import Var
 from .defs import MIPS32, MIPS64
 from .recipes import OP, OPF, OPRI
-from .recipes import R, Ricmp, Rshift, Rshamt, Rret, Rcopy, Rrmov, I, Iz, Iicmp, Ic, Icz, Icr, Icrz, J
+from .recipes import Nop, R, Ricmp, Rshift, Rshamt, Rret, Rcopy, Rrmov, I, Iz, Iicmp, Ic, Icz, Icr, Icrz, J
 from base.legalize import narrow, expand
 
 
@@ -31,6 +31,9 @@ x = Var('x')
 y = Var('y')
 dest = Var('dest')
 args = Var('args')
+
+MIPS32.enc(base.nop, Nop, 0)  # NOP
+MIPS64.enc(base.nop, Nop, 0)
 
 MIPS32.enc(base.iadd.i32,     R, OPF(0b000000, 0b100001))  # ADDU
 MIPS64.enc(base.iadd.i64,     R, OPF(0b000000, 0b101101))  # DADDU
