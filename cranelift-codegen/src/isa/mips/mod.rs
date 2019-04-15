@@ -10,6 +10,7 @@ use super::super::settings as shared_settings;
 #[cfg(feature = "testing_hooks")]
 use crate::binemit::CodeSink;
 use crate::binemit::{emit_function, MemoryCodeSink};
+use crate::cursor::{Cursor, FuncCursor};
 use crate::ir;
 use crate::isa::enc_tables::{self as shared_enc_tables, lookup_enclist, Encodings};
 use crate::isa::Builder as IsaBuilder;
@@ -124,6 +125,20 @@ impl TargetIsa for Isa {
 
     fn emit_function_to_memory(&self, func: &ir::Function, sink: &mut MemoryCodeSink) {
         emit_function(func, binemit::emit_inst, sink)
+    }
+
+    fn fill_delay_slot_for_inst(
+        &self,
+        cur: &mut FuncCursor,
+        _divert: &regalloc::RegDiversions,
+        encinfo: &EncInfo,
+    ) {
+        let inst = cur.current_inst().unwrap();
+        eprintln!(
+            "Filling delay slot for inst [{}] {}",
+            encinfo.display(cur.func.encodings[inst]),
+            cur.func.dfg.display_inst(inst, self as &dyn TargetIsa),
+        );
     }
 }
 

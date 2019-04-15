@@ -55,6 +55,7 @@ pub use crate::isa::registers::{regs_overlap, RegClass, RegClassIndex, RegInfo, 
 pub use crate::isa::stack::{StackBase, StackBaseMask, StackRef};
 
 use crate::binemit;
+use crate::cursor;
 use crate::flowgraph;
 use crate::ir;
 use crate::isa::enc_tables::Encodings;
@@ -385,8 +386,13 @@ pub trait TargetIsa: fmt::Display + Sync {
     /// Emit a whole function into memory.
     fn emit_function_to_memory(&self, func: &ir::Function, sink: &mut binemit::MemoryCodeSink);
 
-    /// Fill delay slots for a function.
-    fn fill_delay_slots(&self, func: &mut ir::Function) -> CodegenResult<binemit::CodeOffset> {
-        Ok(0)
+    /// Fill delay slot for a single instruction.
+    fn fill_delay_slot_for_inst(
+        &self,
+        cur: &mut cursor::FuncCursor,
+        divert: &regalloc::RegDiversions,
+        encinfo: &EncInfo,
+    ) {
+        unimplemented!();
     }
 }

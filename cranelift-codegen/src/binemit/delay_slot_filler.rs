@@ -36,7 +36,7 @@ pub fn fill_delay_slots(func: &mut Function, isa: &TargetIsa) -> CodegenResult<C
                 let enc = cur.func.encodings[inst];
 
                 if cur.func.dfg[inst].opcode().has_delay_slot() {
-                    eprintln!("processing {:?}", cur.func.dfg[inst]);
+                    isa.fill_delay_slot_for_inst(&mut cur, &divert, &encinfo);
                     continue;
                 }
 
