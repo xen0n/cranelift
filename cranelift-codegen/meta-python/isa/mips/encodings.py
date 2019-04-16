@@ -7,7 +7,7 @@ from base.immediates import intcc
 from cdsl.ast import Var
 from .defs import MIPS32, MIPS64
 from .recipes import OP, OPF, OPRI
-from .recipes import Nop, R, Ricmp, Rshift, Rshamt, Rret, Rcopy, Rrmov, I, Iz, Iicmp, Ic, Icz, Icr, Icrz, J
+from .recipes import Nop, R, Ricmp, Rshift, Rshamt, Rret, Rcopy, Rrmov, I, Iz, Iicmp, Ic, Icz, Iczz, Icr, Icrz, J
 from base.legalize import narrow, expand
 
 
@@ -102,10 +102,10 @@ MIPS64.enc(base.icmp_imm.i64(intcc.ult, x, y), Iicmp, OP (0b001011))
 # Control flow.
 
 # Unconditional branches.
-MIPS32.enc(base.jump, Icrz, OPRI(0b00000))   # B
-MIPS64.enc(base.jump, Icrz, OPRI(0b00000))
-MIPS32.enc(base.jump, J,    OP  (0b000010))  # J
-MIPS64.enc(base.jump, J,    OP  (0b000010))
+MIPS32.enc(base.jump, Iczz, OP(0b000100))   # B = BEQZ zero = BEQ zero, zero
+MIPS64.enc(base.jump, Iczz, OP(0b000100))
+MIPS32.enc(base.jump, J,    OP(0b000010))  # J
+MIPS64.enc(base.jump, J,    OP(0b000010))
 # TODO
 # MIPS32.enc(base.call, Icrz, OPRI(0b10001))   # BAL = BGEZAL(rs=0)
 # MIPS64.enc(base.call, Icrz, OPRI(0b10001))

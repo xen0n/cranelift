@@ -121,6 +121,17 @@ Icz = EncRecipe(
         put_i_br(bits, in_reg0, 0, disp, sink);
         ''')
 
+# Ic for unconditional branches (rs=rt=zero).
+Iczz = EncRecipe(
+        'Iczz', Jump, base_size=4,
+        ins=(), outs=(),
+        branch_range=(0, 18),
+        emit='''
+        let dest = i64::from(func.offsets[destination]);
+        let disp = dest - i64::from(sink.offset()) - 4;
+        put_i_br(bits, 0, 0, disp, sink);
+        ''')
+
 # Ic implemented with REGIMM instructions.
 Icr = EncRecipe(
         'Icr', Branch, base_size=4,
