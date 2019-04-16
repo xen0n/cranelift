@@ -106,7 +106,7 @@ Ic = EncRecipe(
         branch_range=(0, 18),
         emit='''
         let dest = i64::from(func.offsets[destination]);
-        let disp = dest - i64::from(sink.offset());
+        let disp = dest - i64::from(sink.offset()) - 4;
         put_i_br(bits, in_reg0, in_reg1, disp, sink);
         ''')
 
@@ -117,7 +117,7 @@ Icz = EncRecipe(
         branch_range=(0, 18),
         emit='''
         let dest = i64::from(func.offsets[destination]);
-        let disp = dest - i64::from(sink.offset());
+        let disp = dest - i64::from(sink.offset()) - 4;
         put_i_br(bits, in_reg0, 0, disp, sink);
         ''')
 
@@ -128,7 +128,7 @@ Icr = EncRecipe(
         branch_range=(0, 18),
         emit='''
         let dest = i64::from(func.offsets[destination]);
-        let disp = dest - i64::from(sink.offset());
+        let disp = dest - i64::from(sink.offset()) - 4;
         put_i_regimm_br(bits, in_reg0, disp, sink);
         ''')
 
@@ -139,7 +139,7 @@ Icrz = EncRecipe(
         branch_range=(0, 18),
         emit='''
         let dest = i64::from(func.offsets[destination]);
-        let disp = dest - i64::from(sink.offset());
+        let disp = dest - i64::from(sink.offset()) - 4;
         put_i_regimm_br(bits, 0, disp, sink);
         ''')
 
@@ -147,7 +147,7 @@ J = EncRecipe(
         'J', Jump, base_size=4, ins=(), outs=(), branch_range=(0, 26),
         emit='''
         let dest = i64::from(func.offsets[destination]);
-        let disp = dest - i64::from(sink.offset());
+        let disp = dest - i64::from(sink.offset()) - 4;
         put_j(bits, disp, sink);
         ''')
 
