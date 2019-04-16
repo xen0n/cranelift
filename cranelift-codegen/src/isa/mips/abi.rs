@@ -128,6 +128,7 @@ pub fn regclass_for_abi_type(ty: Type) -> RegClass {
 pub fn allocatable_registers(_func: &ir::Function, _isa_flags: &settings::Flags) -> RegisterSet {
     let mut regs = RegisterSet::new();
     regs.take(GPR, GPR.unit(0));  // Hard-wired 0.
+    regs.take(GPR, GPR.unit(1));  // at is usually reserved.
     regs.take(GPR, GPR.unit(26)); // k0.
     regs.take(GPR, GPR.unit(27)); // k1.
     regs.take(GPR, GPR.unit(28)); // Global pointer.
