@@ -6,14 +6,14 @@ target mips64el
 
 function %f() {
     sig0 = (i32) -> i32 system_v
-    ; check: sig0 = (i32 [%a0]) -> i32 [%a0] system_v
+    ; check: sig0 = (i32 [%a0]) -> i32 [%v0] system_v
 
     sig1 = (i64) -> b1 system_v
-    ; check: sig1 = (i64 [%a0]) -> b1 [%a0] system_v
+    ; check: sig1 = (i64 [%a0]) -> b1 [%v0] system_v
 
     ; Spilling into the stack args.
     sig2 = (f64, f64, f64, f64, f64, f64, f64, f64, i64) -> f64 system_v
-    ; check: sig2 = (f64 [%f12], f64 [%f13], f64 [%f14], f64 [%f15], f64 [%f16], f64 [%f17], f64 [%f18], f64 [%f19], i64 [0]) -> f64 [%f12] system_v
+    ; check: sig2 = (f64 [%f12], f64 [%f13], f64 [%f14], f64 [%f15], f64 [%f16], f64 [%f17], f64 [%f18], f64 [%f19], i64 [0]) -> f64 [%f0] system_v
 
 ebb0:
     return

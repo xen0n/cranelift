@@ -18,19 +18,21 @@ struct Args {
     pointer_bits: u8,
     pointer_bytes: u8,
     pointer_type: Type,
+    is_for_return: bool,
     regs: u32,
     reg_limit: u32,
     offset: u32,
 }
 
 impl Args {
-    fn new(bits: u8) -> Self {
+    fn new(bits: u8, is_for_return: bool) -> Self {
         Self {
             pointer_bits: bits,
             pointer_bytes: bits / 8,
             pointer_type: Type::int(u16::from(bits)).unwrap(),
+            is_for_return: is_for_return,
             regs: 0,
-            reg_limit: 8,
+            reg_limit: if is_for_return { 2 } else { 8 },
             offset: 0,
         }
     }
@@ -69,12 +71,15 @@ impl ArgAssigner for Args {
 
         if self.regs < self.reg_limit {
             // Assign to a register.
-            let reg = if ty.is_float() {
-                FPR.unit(12 + self.regs as usize)
-            } else {
-                GPR.unit(4 + self.regs as usize)
+            let (bank, reg_initial_idx, increment) = match (ty.is_float(), self.is_for_return) {
+                (false, false) => (GPR, 4, 1),
+                (true, false) => (FPR, 12, 1),
+                (false, true) => (GPR, 2, 1),
+                (true, true) => (FPR, 0, 2),
             };
-            self.regs += 1;
+
+            let reg = bank.unit(reg_initial_idx + self.regs as usize);
+            self.regs += increment;
             ArgumentLoc::Reg(reg).into()
         } else {
             // Assign a stack location.
@@ -95,10 +100,10 @@ pub fn legalize_signature(
 ) {
     let bits = triple.pointer_width().unwrap().bits();
 
-    let mut args = Args::new(bits);
+    let mut args = Args::new(bits, false);
     legalize_args(&mut sig.params, &mut args);
 
-    let mut rets = Args::new(bits);
+    let mut rets = Args::new(bits, true);
     legalize_args(&mut sig.returns, &mut rets);
 
     if current {
