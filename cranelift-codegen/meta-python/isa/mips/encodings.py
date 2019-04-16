@@ -59,9 +59,13 @@ MIPS32.enc(base.bxor_imm.i32, I, OP (0b001110))            # XORI
 MIPS64.enc(base.bxor_imm.i64, I, OP (0b001110))
 
 # Use iadd_imm with %zero to materialize constants.
+#
+# ADDIU is used even for i64 consts because rs is zero anyway, obviating
+# the need to ensure rs is properly sign-extended, and that the immediate
+# is at most 16-bit even for DADDIU.
 MIPS32.enc(base.iconst.i32, Iz, OP(0b001001))  # ADDIU rt, zero
 MIPS64.enc(base.iconst.i32, Iz, OP(0b001001))
-MIPS64.enc(base.iconst.i64, Iz, OP(0b011001))  # DADDIU rt, zero
+MIPS64.enc(base.iconst.i64, Iz, OP(0b001001))
 
 # Dynamic shifts have the same masking semantics as the clif base instructions.
 MIPS32.enc(base.ishl.i32.i32, Rshift, OPF(0b000000, 0b000100))  # SLLV
