@@ -111,6 +111,26 @@ cfg_if! {
                     .arm64()
                     .mode(arch::arm64::ArchMode::Arm)
                     .build(),
+                Architecture::Mips => Capstone::new()
+                    .mips()
+                    .mode(arch::mips::ArchMode::Mode32)
+                    .endian(capstone::Endian::Big)
+                    .build(),
+                Architecture::Mipsel => Capstone::new()
+                    .mips()
+                    .mode(arch::mips::ArchMode::Mode32)
+                    .endian(capstone::Endian::Little)
+                    .build(),
+                Architecture::Mips64 => Capstone::new()
+                    .mips()
+                    .mode(arch::mips::ArchMode::Mode64)
+                    .endian(capstone::Endian::Big)
+                    .build(),
+                Architecture::Mips64el => Capstone::new()
+                    .mips()
+                    .mode(arch::mips::ArchMode::Mode64)
+                    .endian(capstone::Endian::Little)
+                    .build(),
                 _ => return Err(String::from("Unknown ISA")),
             };
 
