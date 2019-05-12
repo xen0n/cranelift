@@ -1,7 +1,11 @@
+use crate::cdsl::cpu_modes::CpuMode;
 use crate::cdsl::inst::InstructionGroup;
 use crate::cdsl::isa::TargetIsa;
 use crate::cdsl::regs::{IsaRegs, IsaRegsBuilder, RegBankBuilder, RegClassBuilder};
 use crate::cdsl::settings::{PredicateNode, SettingGroup, SettingGroupBuilder};
+
+use crate::shared::types::Float::{F32, F64};
+use crate::shared::types::Int::{I32, I64};
 use crate::shared::Definitions as SharedDefinitions;
 
 fn define_settings(shared: &SettingGroup) -> SettingGroup {
@@ -67,5 +71,26 @@ pub fn define(shared_defs: &mut SharedDefinitions) -> TargetIsa {
 
     let inst_group = InstructionGroup::new("mips", "mips specific instruction set");
 
-    TargetIsa::new("mips", inst_group, settings, regs)
+    // CPU modes for 32-bit and 64-bit operation.
+    let mut mips_32 = CpuMode::new("MIPS32");
+    let mut mips_64 = CpuMode::new("MIPS64");
+
+    let expand = shared_defs.transform_groups.by_name("expand");
+    let narrow = shared_defs.transform_groups.by_name("narrow");
+    mips_32.legalize_monomorphic(expand);
+    mips_32.legalize_default(narrow);
+    mips_32.legalize_type(I32, expand);
+    mips_32.legalize_type(F32, expand);
+    mips_32.legalize_type(F64, expand);
+
+    mips_64.legalize_monomorphic(expand);
+    mips_64.legalize_default(narrow);
+    mips_64.legalize_type(I32, expand);
+    mips_64.legalize_type(I64, expand);
+    mips_64.legalize_type(F32, expand);
+    mips_64.legalize_type(F64, expand);
+
+    let cpu_modes = vec![mips_32, mips_64];
+
+    TargetIsa::new("mips", inst_group, settings, regs, cpu_modes)
 }
