@@ -3,7 +3,7 @@ MIPS Encoding recipes.
 """
 from __future__ import absolute_import
 from cdsl.isa import EncRecipe
-from cdsl.predicates import IsSignedInt
+from cdsl.predicates import IsSignedInt, IsUnsignedInt
 from cdsl.registers import Stack
 from base.formats import Binary, BinaryImm, MultiAry, IntCompare, IntCompareImm
 from base.formats import NullAry, Unary, UnaryImm, BranchIcmp, Branch, Jump
@@ -92,6 +92,12 @@ Iz = EncRecipe(
         'Iz', UnaryImm, base_size=4, ins=(), outs=GPR,
         instp=IsSignedInt(UnaryImm.imm, 16),
         emit='put_i(bits, 0, out_reg0, imm.into(), sink);')
+
+# Iz used for materializing 16-bit constants with the 15th bit set.
+Il16 = EncRecipe(
+        'Il16', UnaryImm, base_size=4, ins=(), outs=GPR,
+        instp=IsUnsignedInt(UnaryImm.imm, 16),
+        emit='put_i_unsigned(bits, 0, out_reg0, imm.into(), sink);')
 
 # LUI is the same as Iz but with a different operand range.
 Ilui = EncRecipe(

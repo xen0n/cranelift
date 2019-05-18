@@ -3,7 +3,7 @@
 use crate::binemit::{bad_encoding, CodeSink, Reloc};
 use crate::ir::{Function, Inst, InstructionData};
 use crate::isa::{RegUnit, StackBaseMask, StackRef};
-use crate::predicates::is_signed_int;
+use crate::predicates::{is_signed_int, is_unsigned_int};
 use crate::regalloc::RegDiversions;
 use core::u32;
 
@@ -89,6 +89,17 @@ fn internal_put_r<CS: CodeSink + ?Sized>(
 
 /// I-type instructions.
 fn put_i<CS: CodeSink + ?Sized>(bits: u16, rs: RegUnit, rt: RegUnit, imm: i64, sink: &mut CS) {
+    debug_assert!(is_signed_int(imm, 16, 0), "IMM out of range {:#x}", imm);
+    let (opcode, _funct) = decompose_bits(bits);
+    let rs = u32::from(rs) & 0x1f;
+    let rt = u32::from(rt) & 0x1f;
+
+    internal_put_i(opcode, rs, rt, imm, sink);
+}
+
+/// I-type instructions that take unsigned immediates.
+fn put_i_unsigned<CS: CodeSink + ?Sized>(bits: u16, rs: RegUnit, rt: RegUnit, imm: i64, sink: &mut CS) {
+    debug_assert!(is_unsigned_int(imm, 16, 0), "IMM out of range {:#x}", imm);
     let (opcode, _funct) = decompose_bits(bits);
     let rs = u32::from(rs) & 0x1f;
     let rt = u32::from(rt) & 0x1f;
@@ -110,6 +121,7 @@ fn put_i_br<CS: CodeSink + ?Sized>(bits: u16, rs: RegUnit, rt: RegUnit, imm: i64
 
 /// I-type REGIMM instructions.
 fn put_i_regimm<CS: CodeSink + ?Sized>(bits: u16, rs: RegUnit, imm: i64, sink: &mut CS) {
+    debug_assert!(is_signed_int(imm, 16, 0), "IMM out of range {:#x}", imm);
     let (opcode, rt) = decompose_bits_regimm(bits);
     let rs = u32::from(rs) & 0x1f;
 
@@ -134,7 +146,7 @@ fn internal_put_i<CS: CodeSink + ?Sized>(
     imm: i64,
     sink: &mut CS,
 ) {
-    debug_assert!(is_signed_int(imm, 16, 0), "IMM out of range {:#x}", imm);
+    debug_assert!(is_unsigned_int(imm, 16, 0), "IMM out of range {:#x}", imm);
     let imm = (imm & 0xffff) as u32;
 
     let mut i = imm;
