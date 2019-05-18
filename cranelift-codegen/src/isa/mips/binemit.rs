@@ -96,6 +96,12 @@ fn put_i<CS: CodeSink + ?Sized>(bits: u16, rs: RegUnit, rt: RegUnit, imm: i64, s
     internal_put_i(opcode, rs, rt, imm, sink);
 }
 
+/// LUI which is the same as I but with a different operand range.
+fn put_i_lui<CS: CodeSink + ?Sized>(bits: u16, rs: RegUnit, rt: RegUnit, imm: i64, sink: &mut CS) {
+    debug_assert!(is_signed_int(imm, 32, 16), "IMM out of range {:#x}", imm);
+    put_i(bits, rs, rt, imm >> 16, sink);
+}
+
 /// I-type instructions with a branch destination offset as immediate operand.
 fn put_i_br<CS: CodeSink + ?Sized>(bits: u16, rs: RegUnit, rt: RegUnit, imm: i64, sink: &mut CS) {
     debug_assert!(is_signed_int(imm, 18, 2), "IMM out of range {:#x}", imm);

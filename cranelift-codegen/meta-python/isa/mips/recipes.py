@@ -93,6 +93,12 @@ Iz = EncRecipe(
         instp=IsSignedInt(UnaryImm.imm, 16),
         emit='put_i(bits, 0, out_reg0, imm.into(), sink);')
 
+# LUI is the same as Iz but with a different operand range.
+Ilui = EncRecipe(
+        'Ilui', UnaryImm, base_size=4, ins=(), outs=GPR,
+        instp=IsSignedInt(UnaryImm.imm, 32, 16),
+        emit='put_i_lui(bits, 0, out_reg0, imm.into(), sink);')
+
 # I-type encoding of an integer comparison.
 Iicmp = EncRecipe(
         'Iicmp', IntCompareImm, base_size=4, ins=GPR, outs=GPR,
